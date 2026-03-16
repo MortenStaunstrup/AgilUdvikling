@@ -37,9 +37,17 @@ public class UserRepository : IUserRepository
 
     public User? Login(string username, string password)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            return null;
-        return users.FirstOrDefault(x => x.Name == username && x.Password == password);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                return null;
+            return users.FirstOrDefault(x => x.Name == username && x.Password == password);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     // 1 = Malformed UserDTO data

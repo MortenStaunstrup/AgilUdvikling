@@ -53,13 +53,24 @@ public class UsersController : ControllerBase
     [Route("users/login")]
     public IActionResult Login(UserLogin loginRequest)
     {
-        if (loginRequest == null || string.IsNullOrEmpty(loginRequest.username) || string.IsNullOrEmpty(loginRequest.password))
+        if (!ModelState.IsValid)
             return BadRequest();
         
-        User? userExist = _userRepository.Login(loginRequest.username, loginRequest.password);
-        if (userExist == null)
-            return Unauthorized();
-        return Ok(userExist);
+        if (loginRequest == null || string.IsNullOrWhiteSpace(loginRequest.username) || string.IsNullOrWhiteSpace(loginRequest.password))
+            return BadRequest();
+
+        try
+        {
+            User? userExist = _userRepository.Login(loginRequest.username, loginRequest.password);
+            if (userExist == null)
+                return Unauthorized();
+            return Ok(userExist);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500);
+        }
     }
 }
 
