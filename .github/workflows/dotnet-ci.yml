@@ -16,6 +16,8 @@ jobs:
       with:
         dotnet-version: '10.x'
     - name: Install dependencies
+      run: pwd
+      run: cd Flow/
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
