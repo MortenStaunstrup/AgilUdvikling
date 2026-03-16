@@ -37,9 +37,17 @@ public class UserRepository : IUserRepository
 
     public User? Login(string username, string password)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            return null;
-        return users.FirstOrDefault(x => x.Name == username && x.Password == password);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                return null;
+            return users.FirstOrDefault(x => x.Name == username && x.Password == password);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     // 1 = Malformed UserDTO data
@@ -48,8 +56,13 @@ public class UserRepository : IUserRepository
     // 0 = Accepted
     public int Register(UserDTO user)
     {
-        if (user == null)
+        if (user == null || 
+            string.IsNullOrWhiteSpace(user.Name) || 
+            string.IsNullOrWhiteSpace(user.Email) || 
+            string.IsNullOrWhiteSpace(user.Password)
+            )
             return 1;
+        
         try
         {
             var addUs = new User()
@@ -68,7 +81,7 @@ public class UserRepository : IUserRepository
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return -1;
+            throw;
         }
     }
 

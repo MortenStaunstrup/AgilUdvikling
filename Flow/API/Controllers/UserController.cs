@@ -15,10 +15,6 @@ public class UsersController : ControllerBase
         _userRepository = userRepository;
     }
     
-    // 1 = Malformed UserDTO data
-    // 2 = Username Already exists
-    // -1 = Server error
-    // 0 = Accepted
 
     [HttpPost]
     [Route("api/register")]
@@ -26,23 +22,30 @@ public class UsersController : ControllerBase
     {
         if (user == null)
             return BadRequest();
-        
-        int repoResult = _userRepository.Register(user);
 
-        switch (repoResult)
+        try
         {
-            case 0:
-                Console.WriteLine("User Registered");
-                return Created();
-            case -1:
-                return StatusCode(500);
-            case 1:
-                return BadRequest();
-            case 2:
-                return BadRequest();
-            default:
-                Console.WriteLine("Unexpected return from UserRepository in UserController api/register");
-                return StatusCode(500);
+            int repoResult = _userRepository.Register(user);
+
+            switch (repoResult)
+            {
+                case 0:
+                    Console.WriteLine("User Registered");
+                    return Created();
+                case 1:
+                    return BadRequest();
+                case 2:
+                    return BadRequest();
+                default:
+                    Console.WriteLine("Unexpected return from UserRepository in UserController api/register");
+                    return StatusCode(500);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception thrown in UserRepository in UserController api/register");
+            Console.WriteLine(e);
+            return StatusCode(500);
         }
     }
 
@@ -50,13 +53,24 @@ public class UsersController : ControllerBase
     [Route("users/login")]
     public IActionResult Login(UserLogin loginRequest)
     {
-        if (loginRequest == null || string.IsNullOrEmpty(loginRequest.username) || string.IsNullOrEmpty(loginRequest.password))
+        if (!ModelState.IsValid)
             return BadRequest();
         
-        User? userExist = _userRepository.Login(loginRequest.username, loginRequest.password);
-        if (userExist == null)
-            return Unauthorized();
-        return Ok(userExist);
+        if (loginRequest == null || string.IsNullOrWhiteSpace(loginRequest.username) || string.IsNullOrWhiteSpace(loginRequest.password))
+            return BadRequest();
+
+        try
+        {
+            User? userExist = _userRepository.Login(loginRequest.username, loginRequest.password);
+            if (userExist == null)
+                return Unauthorized();
+            return Ok(userExist);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500);
+        }
     }
 }
 
