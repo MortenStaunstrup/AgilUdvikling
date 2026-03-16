@@ -48,8 +48,13 @@ public class UserRepository : IUserRepository
     // 0 = Accepted
     public int Register(UserDTO user)
     {
-        if (user == null)
+        if (user == null || 
+            string.IsNullOrWhiteSpace(user.Name) || 
+            string.IsNullOrWhiteSpace(user.Email) || 
+            string.IsNullOrWhiteSpace(user.Password)
+            )
             return 1;
+        
         try
         {
             var addUs = new User()
@@ -68,7 +73,7 @@ public class UserRepository : IUserRepository
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return -1;
+            throw;
         }
     }
 

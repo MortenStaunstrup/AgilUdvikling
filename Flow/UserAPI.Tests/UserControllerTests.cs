@@ -70,5 +70,73 @@ public sealed class UserControllerTests
         // Assert
         Assert.IsInstanceOfType<BadRequestResult>(result);
     }
+
+    [TestMethod]
+    public void Empty_Username_Returns_400_Bad_Request()
+    {
+        // Arrange
+        var userDTO = new UserDTO()
+        {
+            Email = "Somethinig@agag",
+            Name = "",
+            Password = "Erarararah"
+        };
+        _mockRepository.Setup(r => r.Register(userDTO))
+            .Returns(1);
+        
+        // Act
+        var result = _controller.RegisterUser(userDTO) as BadRequestResult;
+        Assert.IsInstanceOfType<BadRequestResult>(result);
+    }
+
+    [TestMethod]
+    public void Empty_Password_Returns_400_Bad_Request()
+    {
+        // Arrange
+        var userDTO = new UserDTO()
+        {
+            Email = "Somethinig@agag",
+            Name = "Mortey",
+            Password = ""
+        };
+        _mockRepository.Setup(r => r.Register(userDTO))
+            .Returns(1);
+        
+        // Act
+        var result = _controller.RegisterUser(userDTO) as BadRequestResult;
+        Assert.IsInstanceOfType<BadRequestResult>(result);
+    }
+
+    [TestMethod]
+    public void WhiteSpace_Username_Returns_400_Bad_Request()
+    {
+        // Arrange
+        var userDTO = new UserDTO()
+        {
+            Email = "Somethinig@agag",
+            Name = "      ",
+            Password = "Erarararah"
+        };
+        _mockRepository.Setup(r => r.Register(userDTO))
+            .Returns(1);
+        
+        // Act
+        var result = _controller.RegisterUser(userDTO) as BadRequestResult;
+        Assert.IsInstanceOfType<BadRequestResult>(result);
+    }
+
+    [TestMethod]
+    public void Repository_Throws_Exception_During_Add_Returns_500_Server_Error()
+    {
+        // Arrange
+        _mockRepository.Setup(r => r.Register(It.IsAny<UserDTO>()))
+            .Returns(-1);
+        
+        // Act
+        var result = _controller.RegisterUser(new UserDTO()) as StatusCodeResult;
+        Assert.IsInstanceOfType<StatusCodeResult>(result);
+        var expected = 500;
+        Assert.AreEqual(expected, result.StatusCode);
+    }
     
 }

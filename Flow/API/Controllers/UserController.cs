@@ -15,10 +15,6 @@ public class UsersController : ControllerBase
         _userRepository = userRepository;
     }
     
-    // 1 = Malformed UserDTO data
-    // 2 = Username Already exists
-    // -1 = Server error
-    // 0 = Accepted
 
     [HttpPost]
     [Route("api/register")]
@@ -26,23 +22,30 @@ public class UsersController : ControllerBase
     {
         if (user == null)
             return BadRequest();
-        
-        int repoResult = _userRepository.Register(user);
 
-        switch (repoResult)
+        try
         {
-            case 0:
-                Console.WriteLine("User Registered");
-                return Created();
-            case -1:
-                return StatusCode(500);
-            case 1:
-                return BadRequest();
-            case 2:
-                return BadRequest();
-            default:
-                Console.WriteLine("Unexpected return from UserRepository in UserController api/register");
-                return StatusCode(500);
+            int repoResult = _userRepository.Register(user);
+
+            switch (repoResult)
+            {
+                case 0:
+                    Console.WriteLine("User Registered");
+                    return Created();
+                case 1:
+                    return BadRequest();
+                case 2:
+                    return BadRequest();
+                default:
+                    Console.WriteLine("Unexpected return from UserRepository in UserController api/register");
+                    return StatusCode(500);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception thrown in UserRepository in UserController api/register");
+            Console.WriteLine(e);
+            return StatusCode(500);
         }
     }
 
