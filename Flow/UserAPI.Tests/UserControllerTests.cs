@@ -269,11 +269,5 @@ public sealed class UserControllerTests
         var expected = 500;
         Assert.AreEqual(expected, result.StatusCode);
     }
-
-    [TestMethod]
-    public void Test_That_Fails()
-    {
-        Assert.Fail();
-    }
     
 }
