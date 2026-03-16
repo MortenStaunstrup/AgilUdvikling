@@ -20,6 +20,11 @@ jobs:
            cd Flow/
            dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: pwd
+           cd Flow/
+           dotnet build --no-restore
     - name: Test with the dotnet CLI
-      run: dotnet test --no-build
+      run: 
+           pwd
+           cd Flow/
+           dotnet test --no-build
