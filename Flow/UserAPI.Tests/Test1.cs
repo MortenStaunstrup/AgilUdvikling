@@ -1,4 +1,4 @@
-﻿namespace API.Tests;
+﻿namespace UserAPI.Tests;
 
 [TestClass]
 public sealed class Test1
