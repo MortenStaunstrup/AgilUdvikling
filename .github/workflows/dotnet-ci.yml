@@ -6,7 +6,7 @@ on:
     
 jobs:
   
-  Build and test:
+  Build_and_test:
     name: Build solution and test API
     runs-on: ubuntu-latest
     steps:
